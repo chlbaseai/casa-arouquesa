@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Casa Arouquesa — Restaurante de referência em Viseu. A melhor carne Arouquesa." />
+  <title>Casa Arouquesa | Restaurante em Viseu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #111111;
+      color: #e5e5e5;
+      overflow-x: hidden;
+    }
+
+    .font-serif { font-family: 'Playfair Display', Georgia, serif; }
+    .font-sans { font-family: 'Outfit', sans-serif; }
+
+    :root {
+      --bg: #111111;
+      --bg-dark: #0c0c0c;
+      --bg-card: #1a1a1a;
+      --red: #c5282a;
+      --red-hover: #d63031;
+      --gray: #888888;
+      --gray-dark: #444444;
+    }
+
+    /* ===== Animations ===== */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes float { 0%,100% { transform:translateY(0) rotate(var(--r,0deg)); } 50% { transform:translateY(-10px) rotate(var(--r,0deg)); } }
+    @keyframes floatAlt { 0%,100% { transform:translateY(0) rotate(var(--r,0deg)); } 50% { transform:translateY(8px) rotate(var(--r,0deg)); } }
+    @keyframes scrollDot { 0%,100% { transform:translateY(0); opacity:1; } 50% { transform:translateY(6px); opacity:0.3; } }
+
+    .anim-fade-up { animation: fadeUp 0.8s ease-out both; }
+    .anim-fade-in { animation: fadeIn 1s ease both; }
+    .delay-1 { animation-delay:0.1s; } .delay-2 { animation-delay:0.2s; }
+    .delay-3 { animation-delay:0.3s; } .delay-4 { animation-delay:0.4s; }
+
+    /* Scroll reveal variants */
+    .reveal { opacity:0; transform:translateY(40px); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.vis { opacity:1; transform:translateY(0); }
+
+    .reveal-left { opacity:0; transform:translateX(-60px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+    .reveal-left.vis { opacity:1; transform:translateX(0); }
+
+    .reveal-right { opacity:0; transform:translateX(60px); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+    .reveal-right.vis { opacity:1; transform:translateX(0); }
+
+    .reveal-scale { opacity:0; transform:scale(0.85); transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); }
+    .reveal-scale.vis { opacity:1; transform:scale(1); }
+
+    .reveal-rotate { opacity:0; transform:translateY(30px) rotate(2deg); transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1); }
+    .reveal-rotate.vis { opacity:1; transform:translateY(0) rotate(0deg); }
+
+    /* Parallax scroll elements */
+    [data-parallax] { transition: transform 0.1s linear; will-change:transform; }
+
+    /* Stagger children */
+    .stagger-children > * { opacity:0; transform:translateY(25px); transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+    .stagger-children.vis > *:nth-child(1) { transition-delay:0s; }
+    .stagger-children.vis > *:nth-child(2) { transition-delay:0.08s; }
+    .stagger-children.vis > *:nth-child(3) { transition-delay:0.16s; }
+    .stagger-children.vis > *:nth-child(4) { transition-delay:0.24s; }
+    .stagger-children.vis > *:nth-child(5) { transition-delay:0.32s; }
+    .stagger-children.vis > *:nth-child(6) { transition-delay:0.4s; }
+    .stagger-children.vis > *:nth-child(7) { transition-delay:0.48s; }
+    .stagger-children.vis > *:nth-child(8) { transition-delay:0.56s; }
+    .stagger-children.vis > * { opacity:1; transform:translateY(0); }
+
+    /* Image global rounding */
+    img:not(.nav-logo img):not([style*="border-radius:50%"]) { border-radius:14px; }
+    .menu-card img, .chef-grid img { border-radius:14px; }
+
+    /* Clickable images */
+    img.lightbox-trigger { cursor:pointer; transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), filter 0.3s; }
+    img.lightbox-trigger:hover { transform:scale(1.02); filter:brightness(1.08); }
+
+    /* Fullscreen lightbox */
+    .lightbox-overlay {
+      position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;pointer-events:none;transition:opacity 0.35s cubic-bezier(0.16,1,0.3,1);
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    }
+    .lightbox-overlay.open { opacity:1;pointer-events:all; }
+    .lightbox-overlay img {
+      max-width:90vw;max-height:85vh;object-fit:contain;border-radius:14px;
+      transform:scale(0.9);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .lightbox-overlay.open img { transform:scale(1); }
+    .lightbox-close {
+      position:absolute;top:24px;right:32px;width:44px;height:44px;
+      background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      cursor:pointer;transition:background 0.2s;z-index:2;
+    }
+    .lightbox-close:hover { background:rgba(255,255,255,0.15); }
+    .lightbox-close svg { width:20px;height:20px;stroke:#fff;stroke-width:2; }
+    .lightbox-caption {
+      position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+      font-size:13px;color:rgba(255,255,255,0.5);font-family:'Outfit',sans-serif;
+      letter-spacing:0.5px;text-align:center;white-space:nowrap;
+    }
+
+    /* Carousel */
+    .carousel-wrap { position:relative;overflow:hidden; }
+    .carousel-track {
+      display:flex;gap:16px;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);
+      will-change:transform;
+    }
+    .carousel-track > * { flex:0 0 auto; }
+    .carousel-btn {
+      position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+      width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);
+      background:rgba(12,12,12,0.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      display:flex;align-items:center;justify-content:center;cursor:pointer;
+      transition:background 0.2s,border-color 0.2s;
+    }
+    .carousel-btn:hover { background:rgba(30,30,30,0.9);border-color:rgba(255,255,255,0.3); }
+    .carousel-btn svg { width:20px;height:20px;stroke:#fff;stroke-width:2;fill:none; }
+    .carousel-btn-left { left:12px; }
+    .carousel-btn-right { right:12px; }
+
+    /* ===== 3D Menu Scroll Card ===== */
+    .menu-scroll-container {
+      min-height:80rem;
+      display:flex;align-items:center;justify-content:center;
+      position:relative;padding:2rem;
+    }
+    .menu-scroll-inner {
+      padding:2.5rem 0;width:100%;position:relative;
+      perspective:1000px;
+    }
+    .menu-scroll-header {
+      max-width:900px;margin:0 auto;text-align:center;
+      will-change:transform;
+    }
+    .menu-scroll-card {
+      max-width:900px;margin:-1rem auto 0;width:100%;
+      border:3px solid #3a3a3a;padding:clamp(20px,3vw,40px);
+      background:linear-gradient(145deg, #1e1e1e 0%, #1a1a1a 50%, #161616 100%);
+      border-radius:24px;
+      box-shadow:
+        0 25px 60px rgba(0,0,0,0.6),
+        0 60px 100px rgba(0,0,0,0.45),
+        0 120px 140px rgba(0,0,0,0.3),
+        0 0 0 1px rgba(255,255,255,0.03) inset,
+        0 1px 0 rgba(255,255,255,0.06) inset;
+      will-change:transform;
+      transform-origin:center top;
+    }
+    .menu-scroll-card-inner {
+      background:linear-gradient(180deg, #151515 0%, #121212 100%);
+      border-radius:16px;padding:clamp(28px,4vw,60px);
+      overflow:hidden;
+      box-shadow:0 0 0 1px rgba(255,255,255,0.03) inset;
+    }
+    .menu-card-divider {
+      height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.1),transparent);
+      margin:36px 0;
+    }
+    .menu-card-section-title {
+      font-size:24px;font-weight:700;color:#fff;margin-bottom:24px;
+      display:flex;align-items:center;gap:16px;
+    }
+    .menu-card-section-title span:last-child { display:none; }
+    .menu-card-item {
+      display:flex;align-items:baseline;
+      padding:13px 0;
+    }
+    .menu-card-item-name {
+      color:rgba(255,255,255,0.7);font-size:16px;font-weight:400;
+      letter-spacing:0.2px;
+    }
+    .menu-card-item-dots { display:none; }
+    .menu-card-featured {
+      display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:8px;
+    }
+    .menu-card-featured-item {
+      background:#111;border-radius:14px;overflow:hidden;
+      border:1px solid rgba(255,255,255,0.05);
+      box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    }
+    .menu-card-featured-item img {
+      width:100%;aspect-ratio:16/10;object-fit:cover;display:block;
+      border-radius:14px 14px 0 0;
+    }
+    .menu-card-featured-item div { padding:18px 22px; }
+    .menu-card-featured-item h3 { font-size:22px; }
+    .menu-card-featured-item p.font-sans { font-size:13px; }
+    @media(max-width:600px){
+      .menu-scroll-container{min-height:60rem;padding:1rem;}
+      .menu-card-featured{grid-template-columns:1fr;}
+    }
+
+    /* ===== Buttons ===== */
+    .btn-red {
+      display:inline-block; background:var(--red); color:#fff;
+      padding:14px 32px; font-family:'Outfit',sans-serif; font-size:12px; font-weight:600;
+      letter-spacing:2px; text-transform:uppercase; text-decoration:none; border:none;
+      cursor:pointer; transition:background 0.3s; border-radius: 2px;
+    }
+    .btn-red:hover { background:var(--red-hover); }
+    .btn-red:active { transform:scale(0.97); }
+
+    .btn-outline {
+      display:inline-block; background:transparent; color:#fff;
+      padding:14px 32px; font-family:'Outfit',sans-serif; font-size:12px; font-weight:500;
+      letter-spacing:2px; text-transform:uppercase; text-decoration:none;
+      border:1px solid rgba(255,255,255,0.25); cursor:pointer;
+      transition: border-color 0.3s, background 0.3s; border-radius: 2px;
+    }
+    .btn-outline:hover { border-color:rgba(255,255,255,0.6); background:rgba(255,255,255,0.03); }
+
+    /* ===== Herb decorations ===== */
+    .herb {
+      position:absolute; pointer-events:none; z-index:2;
+      animation: float var(--dur, 6s) ease-in-out infinite;
+      will-change: transform;
+    }
+    .herb-alt { animation-name: floatAlt; }
+
+    /* ===== Section depth system ===== */
+    .sec-fade { position:absolute;left:0;right:0;height:220px;z-index:1;pointer-events:none; }
+    .sec-fade-top { top:0;background:linear-gradient(to bottom, var(--bg-dark) 0%, transparent 100%); }
+    .sec-fade-bot { bottom:0;background:linear-gradient(to top, var(--bg-dark) 0%, transparent 100%); }
+
+    /* ===== Nav ===== */
+    .site-nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      padding:0 40px; height:70px; display:flex; align-items:center; justify-content:space-between;
+      background:rgba(12,12,12,0.7); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+    }
+    .nav-logo { display:flex;align-items:center;flex-shrink:0; }
+    .nav-logo img { height:36px;width:auto;filter:brightness(0) invert(1); }
+    .nav-links { display:flex;align-items:center;gap:32px;list-style:none; }
+    .nav-links a { font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);text-decoration:none;letter-spacing:0.5px;transition:color 0.3s; }
+    .nav-links a:hover,.nav-links a.active { color:#fff; }
+    .nav-right { display:flex;align-items:center;gap:16px; }
+    .nav-right img { width:18px;height:auto;opacity:0.5;cursor:pointer;transition:opacity 0.3s; }
+    .nav-right img:hover { opacity:1; }
+    @media(max-width:900px){ .nav-links{display:none;} .site-nav{padding:0 20px;} }
+
+    ::-webkit-scrollbar { width:5px; } ::-webkit-scrollbar-track { background:#0c0c0c; } ::-webkit-scrollbar-thumb { background:#333;border-radius:3px; }
+  </style>
+</head>
+<body>
+
+<!-- ===== SVG HERB DEFINITIONS (reusable) ===== -->
+<svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+  <defs>
+    <!-- Basil leaf -->
+    <g id="basil">
+      <path d="M25 2C18 8 4 18 3 32c-1 12 8 22 22 26 14-4 23-14 22-26C46 18 32 8 25 2z" fill="#2d6b1e"/>
+      <path d="M25 5C20 10 10 20 9 30c0 6 3 12 8 16L25 5z" fill="#3a8528" opacity="0.6"/>
+      <path d="M25 8v38" stroke="#1e5215" stroke-width="0.8" opacity="0.5"/>
+      <path d="M25 14c-6 3-10 7-12 12M25 22c-5 2-9 6-11 10M25 16c6 3 10 7 12 12M25 24c5 2 8 5 10 9" stroke="#1e5215" stroke-width="0.4" fill="none" opacity="0.35"/>
+    </g>
+    <!-- Small basil -->
+    <g id="basil-sm">
+      <path d="M12 1C8 5 2 10 2 17c0 6 4 11 10 13 6-2 10-7 10-13C22 10 16 5 12 1z" fill="#3a7a28"/>
+      <path d="M12 3v22" stroke="#1e5215" stroke-width="0.5" opacity="0.4"/>
+    </g>
+    <!-- Thyme sprig -->
+    <g id="thyme">
+      <line x1="2" y1="40" x2="18" y2="2" stroke="#4a6e35" stroke-width="1" opacity="0.8"/>
+      <ellipse cx="8" cy="28" rx="3" ry="5" fill="#3a7228" transform="rotate(-20 8 28)" opacity="0.7"/>
+      <ellipse cx="12" cy="22" rx="3" ry="4.5" fill="#4a8a35" transform="rotate(15 12 22)" opacity="0.7"/>
+      <ellipse cx="9" cy="16" rx="2.5" ry="4" fill="#3a7228" transform="rotate(-15 9 16)" opacity="0.6"/>
+      <ellipse cx="13" cy="10" rx="2.5" ry="4" fill="#4a8a35" transform="rotate(20 13 10)" opacity="0.6"/>
+      <ellipse cx="11" cy="5" rx="2" ry="3.5" fill="#3a7228" transform="rotate(-10 11 5)" opacity="0.5"/>
+    </g>
+    <!-- Rosemary -->
+    <g id="rosemary">
+      <line x1="3" y1="50" x2="22" y2="2" stroke="#4a6e35" stroke-width="0.8"/>
+      <ellipse cx="10" cy="38" rx="1.5" ry="6" fill="#2d5a1e" transform="rotate(-25 10 38)" opacity="0.7"/>
+      <ellipse cx="15" cy="32" rx="1.5" ry="5.5" fill="#3a6e24" transform="rotate(20 15 32)" opacity="0.7"/>
+      <ellipse cx="11" cy="26" rx="1.3" ry="5" fill="#2d5a1e" transform="rotate(-20 11 26)" opacity="0.6"/>
+      <ellipse cx="15" cy="20" rx="1.3" ry="5" fill="#3a6e24" transform="rotate(15 15 20)" opacity="0.6"/>
+      <ellipse cx="12" cy="14" rx="1.2" ry="4.5" fill="#2d5a1e" transform="rotate(-15 12 14)" opacity="0.5"/>
+      <ellipse cx="14" cy="8" rx="1" ry="4" fill="#3a6e24" transform="rotate(10 14 8)" opacity="0.5"/>
+    </g>
+    <!-- Peppercorns -->
+    <g id="pepper">
+      <circle cx="4" cy="4" r="3" fill="#1e1810" opacity="0.7"/><circle cx="11" cy="3" r="2.5" fill="#2a2015" opacity="0.6"/>
+      <circle cx="7" cy="9" r="2.8" fill="#251d12" opacity="0.65"/><circle cx="14" cy="8" r="2" fill="#1e1810" opacity="0.5"/>
+      <circle cx="3" cy="13" r="2" fill="#2a2015" opacity="0.4"/>
+    </g>
+    <!-- Garlic clove -->
+    <g id="garlic">
+      <path d="M10 2C6 4 2 9 2 15c0 5 3 8 8 8s8-3 8-8C18 9 14 4 10 2z" fill="#d4c5a9" opacity="0.6"/>
+      <path d="M10 4C8 6 5 10 5 14c0 3 2 5 5 5" fill="#e0d4b8" opacity="0.3"/>
+    </g>
+    <!-- Tomato -->
+    <g id="tomato">
+      <circle cx="10" cy="11" r="9" fill="#7a1a1a"/>
+      <circle cx="10" cy="11" r="7" fill="#8b2020" opacity="0.5"/>
+      <path d="M7 3C9 1 11 1 13 3" stroke="#3a6e24" stroke-width="1.5" fill="none"/>
+      <ellipse cx="10" cy="3" rx="2" ry="1.5" fill="#3a6e24" opacity="0.7"/>
+    </g>
+    <!-- Chili -->
+    <g id="chili">
+      <path d="M3 16C5 20 12 22 22 18C30 14 34 8 32 4C28 6 20 12 10 14C6 15 3 15 3 16z" fill="#8b1a1a" opacity="0.8"/>
+      <path d="M3 15C1 13 2 10 4 9" stroke="#3a6e24" stroke-width="1.2" fill="none"/>
+      <ellipse cx="3" cy="9" rx="2" ry="1.5" fill="#3a6e24" transform="rotate(-30 3 9)" opacity="0.6"/>
+    </g>
+  </defs>
+</svg>
+
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="site-nav">
+  <div class="nav-logo"><img src="casaarouquesa-rip/assets/branding/footer-logo-large.png" alt="Casa Arouquesa" /></div>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#about">Conceito</a></li>
+    <li><a href="#menu">Ementa</a></li>
+    <li><a href="#reservas">Reservas</a></li>
+    <li><a href="#contact">Contactos</a></li>
+  </ul>
+  <div class="nav-right">
+    <img src="casaarouquesa-rip/assets/icons/pt.png" alt="PT" />
+    <img src="casaarouquesa-rip/assets/icons/en.png" alt="EN" />
+    <img src="casaarouquesa-rip/assets/icons/es.png" alt="ES" />
+  </div>
+</nav>
+
+
+<!-- ===== HERO — Scroll-driven video ===== -->
+<section id="home" class="scroll-video-wrap" style="position:relative;height:200vh;background:var(--bg-dark);">
+  <div class="scroll-video-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:flex-end;">
+
+    <!-- Video -->
+    <video id="hero-video" muted playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
+      <source src="ca-scroll.mp4" type="video/mp4" />
+    </video>
+
+    <!-- Left gradient for text legibility -->
+    <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(105deg, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.45) 40%, rgba(10,10,10,0.08) 70%, rgba(10,10,10,0.2) 100%);"></div>
+    <!-- Bottom gradient — seamless blend into next section -->
+    <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(to top, var(--bg-dark) 0%, rgba(12,12,12,0.7) 12%, rgba(12,12,12,0.3) 25%, transparent 45%);"></div>
+
+    <!-- Scattered herbs over the video -->
+    <svg class="herb" style="top:4%;left:2%;width:70px;height:70px;opacity:0.7;--r:-15deg;--dur:7s;z-index:3;"><use href="#basil"/></svg>
+    <svg class="herb" style="top:8%;left:8%;width:45px;height:45px;opacity:0.55;--r:25deg;--dur:8s;z-index:3;"><use href="#basil-sm"/></svg>
+    <svg class="herb herb-alt" style="top:2%;left:14%;width:35px;height:35px;opacity:0.4;--r:60deg;--dur:9s;z-index:3;"><use href="#basil-sm"/></svg>
+    <svg class="herb" style="top:15%;right:8%;width:55px;height:55px;opacity:0.5;--r:20deg;--dur:7.5s;z-index:3;"><use href="#basil"/></svg>
+    <svg class="herb herb-alt" style="top:6%;right:15%;width:30px;height:40px;opacity:0.4;--r:-10deg;--dur:6s;z-index:3;"><use href="#thyme"/></svg>
+    <svg class="herb" style="bottom:35%;right:6%;width:20px;height:50px;opacity:0.35;--r:15deg;--dur:8s;z-index:3;"><use href="#rosemary"/></svg>
+    <svg class="herb herb-alt" style="bottom:25%;left:20%;width:18px;height:18px;opacity:0.3;--dur:5s;z-index:3;"><use href="#pepper"/></svg>
+    <svg class="herb" style="top:55%;left:8%;width:14px;height:14px;opacity:0.25;--dur:7s;z-index:3;"><use href="#garlic"/></svg>
+    <svg class="herb herb-alt" style="top:45%;right:18%;width:22px;height:22px;opacity:0.3;--r:30deg;--dur:9s;z-index:3;"><use href="#tomato"/></svg>
+    <svg class="herb" style="top:30%;right:4%;width:40px;height:20px;opacity:0.35;--r:20deg;--dur:6.5s;z-index:3;"><use href="#chili"/></svg>
+    <svg class="herb herb-alt" style="bottom:40%;left:5%;width:50px;height:50px;opacity:0.3;--r:-25deg;--dur:10s;z-index:3;"><use href="#basil"/></svg>
+
+    <!-- Hero text — bottom-left -->
+    <div style="position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:0 50px 80px;width:100%;">
+      <p class="font-sans anim-fade-up" style="font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:16px;">
+        Restaurante de Referencia em Viseu
+      </p>
+      <h1 class="font-serif anim-fade-up delay-1" style="font-size:clamp(50px,8vw,100px);font-weight:900;line-height:0.92;color:#fff;margin-bottom:10px;text-shadow:0 4px 40px rgba(0,0,0,0.5);">
+        Legendaria
+      </h1>
+      <h1 class="font-serif anim-fade-up delay-2" style="font-size:clamp(50px,8vw,100px);font-weight:700;line-height:0.92;color:#fff;margin-bottom:40px;text-shadow:0 4px 40px rgba(0,0,0,0.5);">
+        <span style="font-weight:500;font-style:italic;color:rgba(255,255,255,0.85);">Casa Arouquesa</span>
+      </h1>
+      <div class="anim-fade-up delay-3" style="display:flex;gap:16px;flex-wrap:wrap;">
+        <a href="#reservas" class="btn-red">Reservar Mesa</a>
+        <a href="#menu" class="btn-outline">Ver Ementa</a>
+      </div>
+      <div id="scroll-hint" style="margin-top:40px;display:flex;align-items:center;gap:10px;opacity:0.4;transition:opacity 0.5s;">
+        <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5">
+          <rect x="1" y="1" width="14" height="22" rx="7" />
+          <line x1="8" y1="6" x2="8" y2="10" style="animation:scrollDot 1.5s ease-in-out infinite;" />
+        </svg>
+        <span class="font-sans" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.4);">Scroll para explorar</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== ABOUT / CONCEPT ===== -->
+<section id="about" style="position:relative;background:var(--bg-dark);padding:120px 0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <!-- Herbs -->
+  <svg class="herb" style="top:8%;right:3%;width:60px;height:60px;opacity:0.45;--r:-20deg;--dur:7s;"><use href="#basil"/></svg>
+  <svg class="herb herb-alt" style="bottom:12%;left:3%;width:40px;height:40px;opacity:0.3;--r:30deg;--dur:8s;"><use href="#basil-sm"/></svg>
+  <svg class="herb" style="top:40%;right:2%;width:20px;height:50px;opacity:0.25;--r:10deg;--dur:9s;"><use href="#rosemary"/></svg>
+  <svg class="herb herb-alt" style="bottom:20%;right:8%;width:16px;height:16px;opacity:0.2;--dur:6s;"><use href="#pepper"/></svg>
+  <svg class="herb" style="top:15%;left:6%;width:14px;height:14px;opacity:0.2;--dur:7s;"><use href="#garlic"/></svg>
+
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;" class="about-grid">
+      <div class="reveal-left" style="position:relative;" data-parallax="-0.08">
+        <img class="lightbox-trigger" src="casaarouquesa-rip/assets/food/IMG_9677.jpg" alt="Vitela Assada no Forno" data-caption="Vitela Assada no Forno" style="width:100%;aspect-ratio:4/5;object-fit:cover;" />
+        <div style="position:absolute;bottom:-20px;left:10%;right:10%;height:40px;background:radial-gradient(ellipse,rgba(0,0,0,0.4) 0%,transparent 70%);filter:blur(12px);"></div>
+      </div>
+      <div class="reveal-right" style="transition-delay:0.15s;">
+        <p class="font-sans" style="font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:20px;">O Nosso Conceito</p>
+        <h2 class="font-serif" style="font-size:clamp(36px,4vw,56px);font-weight:800;line-height:1.1;color:#fff;margin-bottom:8px;">A Carne Arouquesa</h2>
+        <h2 class="font-serif" style="font-size:clamp(36px,4vw,56px);font-weight:400;font-style:italic;line-height:1.1;color:rgba(255,255,255,0.75);margin-bottom:30px;">Elevada a Arte</h2>
+        <p class="font-sans" style="font-size:14px;line-height:1.8;color:var(--gray);max-width:480px;margin-bottom:16px;">Focada na cozinha saudavel e no valor individual do produto, exploramos sabores e aromas que a carne Arouquesa oferece. A cozinha conta historias atraves de sabores e aromas.</p>
+        <p class="font-sans" style="font-size:14px;line-height:1.8;color:var(--gray);max-width:480px;margin-bottom:36px;">O estabelecimento enfatiza um ambiente refinado com atencao ao detalhe, servico simpatico e uma oferta excepcional: dois pratos incontornaveis acompanhados de guarnicoes sazonais.</p>
+        <a href="#menu" class="btn-red">Descubra Mais</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== O ESPAÇO — Clean Carousel ===== -->
+<section style="position:relative;background:var(--bg-dark);padding:100px 0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <svg class="herb" style="top:5%;right:4%;width:45px;height:45px;opacity:0.3;--r:20deg;--dur:8s;"><use href="#basil-sm"/></svg>
+  <svg class="herb herb-alt" style="bottom:8%;left:3%;width:18px;height:45px;opacity:0.2;--r:-10deg;--dur:7s;"><use href="#thyme"/></svg>
+
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;position:relative;z-index:2;">
+    <!-- Header + description -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:50px;" class="espaco-header-grid">
+      <div class="reveal-left">
+        <p class="font-sans" style="font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">O Nosso Espaco</p>
+        <h2 class="font-serif" style="font-size:clamp(36px,4vw,56px);font-weight:800;color:#fff;line-height:1.1;margin-bottom:8px;">Um Ambiente</h2>
+        <h2 class="font-serif" style="font-size:clamp(36px,4vw,56px);font-weight:400;font-style:italic;color:rgba(255,255,255,0.7);line-height:1.1;">Moderno e Refinado</h2>
+      </div>
+      <div class="reveal-right" style="transition-delay:0.12s;">
+        <p class="font-sans" style="font-size:15px;line-height:1.9;color:var(--gray);">O Restaurante proporciona um ambiente moderno e confortavel, apresentando um servico de elevada qualidade. Remodelado em 2019, o interior combina paredes em pedra natural com iluminacao quente e mobiliario contemporaneo.</p>
+      </div>
+    </div>
+
+    <!-- Carousel -->
+    <div class="carousel-wrap reveal-scale" id="espaco-carousel" style="margin-bottom:0;">
+      <div class="carousel-track" id="espaco-track">
+        <div style="width:clamp(300px,45vw,550px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/food/2000x1333.png" alt="Sala de jantar" data-caption="Sala de jantar — design e identidade Arouquesa" style="width:100%;aspect-ratio:3/2;object-fit:cover;" /></div>
+        <div style="width:clamp(260px,35vw,420px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00007.jpg" alt="Iluminacao quente" data-caption="Ambiente intimo com iluminacao quente" style="width:100%;aspect-ratio:3/4;object-fit:cover;" /></div>
+        <div style="width:clamp(300px,45vw,550px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/_DSF2532_2.jpg" alt="Mesa intima" data-caption="Mesa privada com candeeiros de autor" style="width:100%;aspect-ratio:3/2;object-fit:cover;" /></div>
+        <div style="width:clamp(260px,35vw,420px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00013.jpg" alt="Touro Arouques" data-caption="Identidade Arouquesa — o simbolo da casa" style="width:100%;aspect-ratio:3/4;object-fit:cover;" /></div>
+        <div style="width:clamp(300px,45vw,550px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00008.jpg" alt="Coluna iluminada" data-caption="Design contemporaneo — coluna e sala principal" style="width:100%;aspect-ratio:3/2;object-fit:cover;" /></div>
+        <div style="width:clamp(260px,35vw,420px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00011.jpg" alt="Lounge" data-caption="Lounge — sofas de veludo e iluminacao de autor" style="width:100%;aspect-ratio:3/4;object-fit:cover;" /></div>
+        <div style="width:clamp(300px,45vw,550px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00016.jpg" alt="Entrada" data-caption="Entrada — Bellavista, Viseu" style="width:100%;aspect-ratio:3/2;object-fit:cover;" /></div>
+        <div style="width:clamp(260px,35vw,420px);"><img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00014.jpg" alt="Sala privada" data-caption="Sala privada — ate 30 pessoas" style="width:100%;aspect-ratio:3/4;object-fit:cover;" /></div>
+      </div>
+      <button class="carousel-btn carousel-btn-left" onclick="slideCarousel('espaco',-1)" aria-label="Anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="carousel-btn carousel-btn-right" onclick="slideCarousel('espaco',1)" aria-label="Proximo">
+        <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MENU — 3D Scroll Card ===== -->
+<section id="menu" style="position:relative;background:var(--bg-dark);overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <svg class="herb" style="top:3%;left:4%;width:55px;height:55px;opacity:0.4;--r:-10deg;--dur:7s;"><use href="#basil"/></svg>
+  <svg class="herb herb-alt" style="bottom:5%;right:3%;width:45px;height:45px;opacity:0.35;--r:35deg;--dur:8s;"><use href="#basil-sm"/></svg>
+  <svg class="herb" style="top:50%;right:2%;width:18px;height:45px;opacity:0.2;--r:5deg;--dur:9s;"><use href="#thyme"/></svg>
+  <svg class="herb herb-alt" style="top:20%;left:2%;width:35px;height:18px;opacity:0.25;--r:15deg;--dur:6s;"><use href="#chili"/></svg>
+
+  <div class="menu-scroll-container" id="menu-scroll-container">
+    <div class="menu-scroll-inner">
+      <!-- Floating header -->
+      <div class="menu-scroll-header" id="menu-scroll-header">
+        <div style="width:40px;height:3px;background:var(--red);margin:0 auto 20px;"></div>
+        <h2 class="font-serif" style="font-size:clamp(36px,4.5vw,58px);font-weight:800;color:#fff;margin-bottom:8px;">A Nossa Ementa</h2>
+        <p class="font-sans" style="font-size:15px;color:var(--gray);max-width:480px;margin:0 auto;">Focada na cozinha saudavel e no valor individual do produto</p>
+      </div>
+
+      <!-- 3D Rotating Card -->
+      <div class="menu-scroll-card" id="menu-scroll-card">
+        <div class="menu-scroll-card-inner">
+
+          <!-- Featured dishes -->
+          <div class="menu-card-featured">
+            <div class="menu-card-featured-item">
+              <img class="lightbox-trigger" src="casaarouquesa-rip/assets/food/IMG_9677.jpg" alt="Vitela Assada no Forno" data-caption="Vitela Assada no Forno — especialidade da casa" />
+              <div>
+                <p class="font-sans" style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:6px;">Especialidade</p>
+                <h3 class="font-serif" style="font-size:20px;color:#fff;font-weight:700;">Vitela Assada no Forno</h3>
+                <p class="font-sans" style="font-size:12px;color:var(--gray);margin-top:4px;">Um dos segredos de confeccao mais procurados no nosso pais.</p>
+              </div>
+            </div>
+            <div class="menu-card-featured-item">
+              <img class="lightbox-trigger" src="casaarouquesa-rip/assets/food/IMG_9685.jpg" alt="Bife Arouques a Casa" data-caption="Bife Arouques a Casa — o verdadeiro sabor" />
+              <div>
+                <p class="font-sans" style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:6px;">Especialidade</p>
+                <h3 class="font-serif" style="font-size:20px;color:#fff;font-weight:700;">Bife Arouques a Casa</h3>
+                <p class="font-sans" style="font-size:12px;color:var(--gray);margin-top:4px;">O verdadeiro sabor do famoso bife Arouques.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu-card-divider"></div>
+
+          <!-- Entradas -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px 60px;" class="menu-list-grid">
+            <div>
+              <div class="menu-card-section-title font-serif"><span>Entradas</span><span></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Sopa do Dia</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Presunto Premium</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Carpaccio de Vitela</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Chourica Grelhada</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Queijo Amanteigado</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Croquetes de Vitela</span><span class="menu-card-item-dots"></span></div>
+            </div>
+            <div>
+              <div class="menu-card-section-title font-serif"><span>Outras Opcoes</span><span></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Secretos de Porco Preto</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Bacalhau a Arouquesa</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Massa de Camarao</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Massa a Arouquesa</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Menu Infantil</span><span class="menu-card-item-dots"></span></div>
+            </div>
+          </div>
+
+          <div class="menu-card-divider"></div>
+
+          <!-- Sobremesas + Acompanhamentos -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px 60px;" class="menu-list-grid">
+            <div>
+              <div class="menu-card-section-title font-serif"><span>Sobremesas</span><span></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Maca Assada</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Pudim de Coco</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Mousse de Chocolate</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Tiramisu</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Petit Gateau</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Cheesecake</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Tarte de Whiskey</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Especialidade da Casa</span><span class="menu-card-item-dots"></span></div>
+            </div>
+            <div>
+              <div class="menu-card-section-title font-serif"><span>Acompanhamentos</span><span></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Batatas Assadas</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Batatas Fritas</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Arroz Branco</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Legumes Salteados</span><span class="menu-card-item-dots"></span></div>
+              <div class="menu-card-item"><span class="menu-card-item-name">Salada Mista</span><span class="menu-card-item-dots"></span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== GARRAFEIRA ===== -->
+<section style="position:relative;background:var(--bg-dark);padding:0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot" style="z-index:3;"></div>
+
+  <svg class="herb" style="top:10%;left:2%;width:30px;height:30px;opacity:0.3;--r:40deg;--dur:8s;z-index:4;"><use href="#basil-sm"/></svg>
+  <svg class="herb herb-alt" style="bottom:15%;right:2%;width:22px;height:22px;opacity:0.2;--r:-15deg;--dur:7s;z-index:4;"><use href="#tomato"/></svg>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;min-height:600px;" class="chef-grid">
+    <div style="display:flex;flex-direction:column;justify-content:center;padding:80px 60px 80px 80px;background:var(--bg-dark);position:relative;z-index:2;" class="reveal-left">
+      <p class="font-sans" style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px;">A Nossa Garrafeira</p>
+      <h2 class="font-serif" style="font-size:clamp(30px,3.5vw,46px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:24px;">
+        Uma das Melhores<br/><span style="font-weight:400;font-style:italic;color:rgba(255,255,255,0.7);">de Portugal</span>
+      </h2>
+      <p class="font-sans" style="font-size:14px;color:var(--gray);line-height:1.8;max-width:420px;margin-bottom:20px;">
+        A nossa garrafeira e considerada uma das melhores de Portugal, com uma seleccao criteriosa de vinhos nacionais e internacionais que complementam na perfeicao cada prato.
+      </p>
+      <p class="font-sans" style="font-size:14px;color:var(--gray);line-height:1.8;max-width:420px;margin-bottom:30px;">
+        Realizamos regularmente jantares vinicos em parceria com as melhores quintas portuguesas — Ruinart, Quinta da Carolina, Vinha.Paz — experiencias unicas de harmonizacao.
+      </p>
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <img src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00029.jpg" alt="Coleccao de vinhos" style="width:120px;height:80px;object-fit:cover;opacity:0.7;" />
+        <img src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00027.jpg" alt="Wine bar" style="width:120px;height:80px;object-fit:cover;opacity:0.7;" />
+      </div>
+    </div>
+    <div class="reveal-right" style="position:relative;overflow:hidden;transition-delay:0.12s;">
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/hero/3.jpg" alt="Garrafeira Casa Arouquesa" data-caption="Garrafeira — uma das melhores de Portugal" style="width:100%;height:100%;object-fit:cover;display:block;" />
+      <div style="position:absolute;inset:0;background:linear-gradient(to right, var(--bg-dark) 0%, transparent 25%);"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(12,12,12,0.4) 0%, transparent 30%);"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== SALA PRIVADA & ESPLANADA ===== -->
+<section style="position:relative;background:var(--bg-dark);padding:100px 0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;position:relative;z-index:2;">
+    <div style="display:grid;grid-template-columns:0.8fr 1.2fr;gap:60px;align-items:center;margin-bottom:60px;" class="sala-grid">
+      <div class="reveal-left">
+        <p class="font-sans" style="font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">Eventos Privados</p>
+        <h2 class="font-serif" style="font-size:clamp(28px,3vw,40px);font-weight:800;color:#fff;line-height:1.15;margin-bottom:20px;">
+          Sala Privada<br/><span style="font-weight:400;font-style:italic;color:rgba(255,255,255,0.7);">para Ocasioes Especiais</span>
+        </h2>
+        <p class="font-sans" style="font-size:14px;color:var(--gray);line-height:1.8;margin-bottom:16px;">
+          A nossa sala privada e o cenario perfeito para jantares de negocio, celebracoes e eventos vinicos exclusivos. Com capacidade ate 30 pessoas e equipamento audiovisual.
+        </p>
+        <p class="font-sans" style="font-size:14px;color:var(--gray);line-height:1.8;">
+          Jantares do Dia dos Namorados, Dia Internacional da Mulher, e experiencias gastronomicas tematicas fazem parte do nosso calendario anual.
+        </p>
+      </div>
+      <div class="reveal-right" style="transition-delay:0.12s;">
+        <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/remodelacao-2019/image00014.jpg" alt="Sala privada" data-caption="Sala privada — ate 30 pessoas" style="width:100%;aspect-ratio:16/10;object-fit:cover;" />
+      </div>
+    </div>
+
+    <!-- Esplanada wide -->
+    <div class="reveal-scale">
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/hero/01.jpg" alt="Esplanada Casa Arouquesa" data-caption="Esplanada — noites de verao em Viseu" style="width:100%;aspect-ratio:21/9;object-fit:cover;" />
+      <p class="font-sans" style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:14px;text-align:center;">Esplanada — noites de verao em Viseu</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== PERSONALIDADES ===== -->
+<section style="position:relative;background:var(--bg-dark);padding:100px 0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <svg class="herb" style="top:8%;right:3%;width:50px;height:50px;opacity:0.35;--r:15deg;--dur:7s;"><use href="#basil"/></svg>
+  <svg class="herb herb-alt" style="bottom:10%;left:4%;width:25px;height:60px;opacity:0.2;--r:-5deg;--dur:8s;"><use href="#rosemary"/></svg>
+  <svg class="herb" style="top:40%;left:2%;width:12px;height:12px;opacity:0.15;--dur:6s;"><use href="#garlic"/></svg>
+
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;text-align:center;position:relative;z-index:2;">
+    <div class="reveal-rotate">
+      <p class="font-sans" style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px;">Quem nos Visita</p>
+      <h2 class="font-serif" style="font-size:clamp(30px,3.5vw,46px);font-weight:800;color:#fff;margin-bottom:56px;">
+        Personalidades na<br/><span style="color:var(--red);font-style:italic;">Casa Arouquesa</span>
+      </h2>
+    </div>
+    <div class="stagger-children" style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap;margin-bottom:64px;">
+      <div style="text-align:center;"><img src="casaarouquesa-rip/assets/gallery/personalidades/joao_felix.png" alt="Joao Felix" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.1);" /><p style="font-size:14px;color:var(--gray);margin-top:14px;font-weight:500;">Joao Felix</p></div>
+      <div style="text-align:center;"><img src="casaarouquesa-rip/assets/gallery/personalidades/oliver_kahn.png" alt="Oliver Kahn" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.1);" /><p style="font-size:14px;color:var(--gray);margin-top:14px;font-weight:500;">Oliver Kahn</p></div>
+      <div style="text-align:center;"><img src="casaarouquesa-rip/assets/gallery/personalidades/img011.jpg" alt="Tiago Bettencourt" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.1);" /><p style="font-size:14px;color:var(--gray);margin-top:14px;font-weight:500;">Tiago Bettencourt</p></div>
+      <div style="text-align:center;"><img src="casaarouquesa-rip/assets/gallery/personalidades/img010.jpg" alt="Pedro Passos Coelho" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.1);" /><p style="font-size:14px;color:var(--gray);margin-top:14px;font-weight:500;">Pedro Passos Coelho</p></div>
+      <div style="text-align:center;"><img src="casaarouquesa-rip/assets/gallery/personalidades/35232928.jpg" alt="Maniche" style="width:180px;height:180px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.1);" /><p style="font-size:14px;color:var(--gray);margin-top:14px;font-weight:500;">Maniche</p></div>
+    </div>
+    <div class="stagger-children" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6174.jpg" alt="Interior" data-caption="Casa Arouquesa — interior" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6121.jpg" alt="Interior" data-caption="Casa Arouquesa — ambiente" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6137.jpg" alt="Interior" data-caption="Casa Arouquesa — detalhe" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6157.jpg" alt="Interior" data-caption="Casa Arouquesa — sala" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6165.jpg" alt="Interior" data-caption="Casa Arouquesa — espaco" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+      <img class="lightbox-trigger" src="casaarouquesa-rip/assets/gallery/nova-imagem/DSF6118.jpg" alt="Interior" data-caption="Casa Arouquesa — galeria" style="width:100%;aspect-ratio:3/2;object-fit:cover;opacity:0.8;" />
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== RESERVE TABLE ===== -->
+<section id="reservas" style="position:relative;background:var(--bg-dark);padding:100px 0;overflow:hidden;">
+  <div class="sec-fade sec-fade-bot"></div>
+
+  <svg class="herb" style="bottom:8%;right:2%;width:60px;height:60px;opacity:0.3;--r:-10deg;--dur:7s;"><use href="#basil"/></svg>
+  <svg class="herb herb-alt" style="top:12%;left:3%;width:20px;height:50px;opacity:0.2;--r:10deg;--dur:8s;"><use href="#thyme"/></svg>
+  <svg class="herb" style="bottom:20%;left:8%;width:12px;height:12px;opacity:0.15;--dur:6s;"><use href="#garlic"/></svg>
+
+  <div style="max-width:800px;margin:0 auto;padding:0 50px;text-align:center;position:relative;z-index:2;">
+    <div class="reveal-scale">
+      <p class="font-sans" style="font-size:11px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px;">Estamos a sua espera</p>
+      <h2 class="font-serif" style="font-size:clamp(36px,4.5vw,58px);font-weight:800;color:#fff;margin-bottom:24px;">Reserve a Sua Mesa</h2>
+      <p class="font-sans" style="font-size:14px;color:var(--gray);line-height:1.8;max-width:500px;margin:0 auto 16px;">
+        Porque queremos que se sinta privilegiado, convidamo-lo a conhecer o nosso espaco e a fazer ja a escolha da sua mesa preferida.
+      </p>
+      <p class="font-sans" style="font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:40px;">Capacidade ate 30 pessoas</p>
+      <a href="tel:+351232416174" class="btn-red" style="margin-bottom:24px;">Reservar Agora</a>
+      <div style="margin-top:40px;display:flex;justify-content:center;gap:40px;flex-wrap:wrap;">
+        <div style="text-align:center;"><p class="font-sans" style="font-size:12px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Telefone</p><p style="font-size:15px;color:#fff;">+351 232 416 174</p></div>
+        <div style="text-align:center;"><p class="font-sans" style="font-size:12px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Email</p><p style="font-size:15px;color:#fff;">geral@casaarouquesa.pt</p></div>
+        <div style="text-align:center;"><p class="font-sans" style="font-size:12px;color:var(--gray-dark);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">Horario</p><p style="font-size:14px;color:rgba(255,255,255,0.6);">Seg-Sex 12:15-15:00 | 19:15-22:00</p><p style="font-size:14px;color:rgba(255,255,255,0.6);">Sab 12:15-15:00 | 19:15-22:30</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== CONTACT ===== -->
+<section id="contact" style="position:relative;background:var(--bg-dark);padding:80px 0;overflow:hidden;">
+
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;position:relative;z-index:2;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:50px;" class="contact-grid stagger-children">
+      <div>
+        <p class="font-sans" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:16px;">Localizacao</p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:1.8;font-weight:300;">Empreendimento Bellavista, Lote 0<br/>Repeses 3500-680<br/>Viseu, Portugal</p>
+      </div>
+      <div>
+        <p class="font-sans" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:16px;">Contacto</p>
+        <p style="font-size:14px;color:rgba(255,255,255,0.5);line-height:2;font-weight:300;">+351 232 416 174<br/>geral@casaarouquesa.pt</p>
+        <a href="https://www.facebook.com/CasaArouquesa" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.3s;">Facebook &rarr;</a>
+      </div>
+      <div>
+        <p class="font-sans" style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:16px;">Horario</p>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:2;font-weight:300;">
+          <div style="display:flex;justify-content:space-between;"><span>Seg - Sex</span><span style="color:rgba(255,255,255,0.6);">12:15-15:00 | 19:15-22:00</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Sabado</span><span style="color:rgba(255,255,255,0.6);">12:15-15:00 | 19:15-22:30</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>Domingo</span><span>Encerrado</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== FOOTER ===== -->
+<footer style="background:var(--bg-dark);padding:40px 0;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 50px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+    <div style="display:flex;align-items:center;gap:20px;">
+      <img src="casaarouquesa-rip/assets/branding/footer-logo-large.png" alt="Casa Arouquesa" style="height:40px;width:auto;opacity:0.5;filter:brightness(0) invert(1);" />
+      <span style="font-size:12px;color:rgba(255,255,255,0.15);">Casa Arouquesa. Todos os direitos reservados.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:20px;opacity:0.3;">
+      <img src="casaarouquesa-rip/assets/branding/centro2030.png" alt="Centro 2030" style="height:28px;" />
+      <img src="casaarouquesa-rip/assets/branding/compete2020-eu-logos.png" alt="COMPETE 2020" style="height:28px;" />
+      <a href="https://restaurantguru.com/Casa-Arouquesa-Viseu" target="_blank" rel="noopener"><img src="casaarouquesa-rip/assets/branding/restaurant-guru-badge.png" alt="Restaurant Guru" style="height:32px;" /></a>
+    </div>
+    <div style="display:flex;gap:20px;font-size:11px;">
+      <a href="#" style="color:rgba(255,255,255,0.15);text-decoration:none;">Privacidade</a>
+      <a href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.15);text-decoration:none;">Livro de Reclamacoes</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ===== RESPONSIVE ===== -->
+<style>
+  @media (max-width:900px) {
+    .about-grid{grid-template-columns:1fr!important;gap:40px!important;}
+    .menu-featured-grid{grid-template-columns:1fr!important;}
+    .menu-list-grid{grid-template-columns:1fr!important;gap:40px!important;}
+    .chef-grid{grid-template-columns:1fr!important;}
+    .chef-grid>div:first-child{padding:60px 30px!important;}
+    .chef-grid>div:last-child{aspect-ratio:16/9;}
+    .espaco-header-grid{grid-template-columns:1fr!important;gap:30px!important;}
+    .sala-grid{grid-template-columns:1fr!important;gap:40px!important;}
+    .contact-grid{grid-template-columns:1fr!important;gap:30px!important;}
+    #home{height:180vh!important;}
+    .scroll-video-sticky>div:last-child{padding:0 24px 60px!important;}
+    section{overflow:hidden;}
+    .herb{display:none;}
+  }
+  @media(max-width:600px){
+    .site-nav{padding:0 16px;height:60px;}
+    .nav-logo{width:36px;height:36px;}
+    .nav-right{gap:10px;}
+    section>div[style*="padding:0 50px"],div[style*="padding:0 50px"]{padding:0 20px!important;}
+  }
+</style>
+
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+  // ==========================================
+  // SCROLL-DRIVEN VIDEO — SMOOTH LERP
+  // ==========================================
+  (function() {
+    const video = document.getElementById('hero-video');
+    const wrap = document.querySelector('.scroll-video-wrap');
+    const hint = document.getElementById('scroll-hint');
+    if (!video || !wrap) return;
+
+    const START_TIME = 1.5; // skip first 1.5s
+    video.pause();
+    let smoothTime = START_TIME;
+    let targetTime = START_TIME;
+    let ready = false;
+
+    video.addEventListener('loadeddata', () => {
+      ready = true;
+      video.currentTime = START_TIME;
+      readScroll();
+    });
+
+    video.addEventListener('canplaythrough', () => {
+      if (!ready) { ready = true; video.currentTime = START_TIME; readScroll(); }
+    });
+
+    function readScroll() {
+      const rect = wrap.getBoundingClientRect();
+      const dist = wrap.offsetHeight - window.innerHeight;
+      const progress = Math.max(0, Math.min(1, -rect.top / dist));
+      if (video.duration && isFinite(video.duration)) {
+        targetTime = START_TIME + progress * (video.duration - START_TIME);
+      }
+      // Fade video out in the last 20% of scroll so the transition is seamless
+      const fadeStart = 0.75;
+      if (progress > fadeStart) {
+        const fadeProgress = (progress - fadeStart) / (1 - fadeStart);
+        video.style.opacity = 1 - fadeProgress * 0.6;
+      } else {
+        video.style.opacity = 1;
+      }
+      if (hint) hint.style.opacity = progress > 0.03 ? '0' : '0.4';
+    }
+
+    function tick() {
+      if (ready && video.duration) {
+        const diff = targetTime - smoothTime;
+        if (Math.abs(diff) > 0.001) {
+          smoothTime += diff * 0.06;
+          video.currentTime = smoothTime;
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('scroll', readScroll, { passive: true });
+    requestAnimationFrame(tick);
+  })();
+
+  // ==========================================
+  // Scroll reveal — all variants
+  // ==========================================
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-rotate, .stagger-children').forEach(el => obs.observe(el));
+
+  // ==========================================
+  // Parallax on scroll
+  // ==========================================
+  const parallaxEls = document.querySelectorAll('[data-parallax]');
+  if (parallaxEls.length) {
+    window.addEventListener('scroll', () => {
+      const sy = window.scrollY;
+      parallaxEls.forEach(el => {
+        const speed = parseFloat(el.dataset.parallax) || 0;
+        const rect = el.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const offset = (center - window.innerHeight / 2) * speed;
+        el.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }, { passive: true });
+  }
+
+  // ==========================================
+  // Active nav
+  // ==========================================
+  const secs = document.querySelectorAll('section[id]');
+  const nLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let c = '';
+    secs.forEach(s => { if (scrollY >= s.offsetTop - 120) c = s.id; });
+    nLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + c); });
+  }, { passive: true });
+
+  // ==========================================
+  // 3D Menu Scroll Card (ContainerScroll port)
+  // ==========================================
+  (function() {
+    const container = document.getElementById('menu-scroll-container');
+    const header = document.getElementById('menu-scroll-header');
+    const card = document.getElementById('menu-scroll-card');
+    if (!container || !header || !card) return;
+
+    const isMobile = () => window.innerWidth <= 768;
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function update() {
+      const rect = container.getBoundingClientRect();
+      const total = container.offsetHeight - window.innerHeight;
+      const scrolled = -rect.top;
+      const progress = Math.max(0, Math.min(1, scrolled / total));
+
+      // Rotate: 20deg -> 0deg
+      const rotateX = lerp(20, 0, progress);
+      // Scale: 1.05 -> 1 desktop, 0.7 -> 0.9 mobile
+      const scaleFrom = isMobile() ? 0.7 : 1.05;
+      const scaleTo = isMobile() ? 0.9 : 1;
+      const scale = lerp(scaleFrom, scaleTo, progress);
+      // Header translates up
+      const translateY = lerp(0, -100, progress);
+
+      card.style.transform = 'rotateX(' + rotateX + 'deg) scale(' + scale + ')';
+      header.style.transform = 'translateY(' + translateY + 'px)';
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+
+  // ==========================================
+  // Carousel
+  // ==========================================
+  const carousels = {};
+  document.querySelectorAll('.carousel-wrap').forEach(wrap => {
+    const id = wrap.id.replace('-carousel','');
+    const track = wrap.querySelector('.carousel-track');
+    if (!track) return;
+    carousels[id] = { track: track, pos: 0 };
+  });
+
+  function slideCarousel(id, dir) {
+    const c = carousels[id];
+    if (!c) return;
+    const step = window.innerWidth * 0.4;
+    const maxScroll = c.track.scrollWidth - c.track.parentElement.offsetWidth;
+    c.pos = Math.max(0, Math.min(maxScroll, c.pos + dir * step));
+    c.track.style.transform = 'translateX(-' + c.pos + 'px)';
+  }
+
+  // ==========================================
+  // Lightbox
+  // ==========================================
+  const lbOverlay = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-cap');
+
+  document.querySelectorAll('.lightbox-trigger').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbCaption.textContent = img.dataset.caption || '';
+      lbOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  function closeLightbox() {
+    lbOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  lbOverlay.addEventListener('click', (e) => {
+    if (e.target === lbOverlay || e.target.closest('.lightbox-close')) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>
+
+<!-- Lightbox overlay -->
+<div class="lightbox-overlay" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">
+    <svg viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <img id="lightbox-img" src="" alt="" />
+  <p class="lightbox-caption" id="lightbox-cap"></p>
+</div>
+
+</body>
+</html>
