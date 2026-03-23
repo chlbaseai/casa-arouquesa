@@ -338,9 +338,11 @@
   <div class="scroll-video-sticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;align-items:flex-end;">
 
     <!-- Video -->
-    <video id="hero-video" muted playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
+    <video id="hero-video" muted playsinline autoplay preload="auto" poster="casaarouquesa-rip/assets/hero/01.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;">
       <source src="ca-scroll.mp4" type="video/mp4" />
     </video>
+    <!-- Mobile fallback image (shown if video cannot play) -->
+    <img id="hero-fallback" src="casaarouquesa-rip/assets/hero/01.jpg" alt="Casa Arouquesa" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;display:none;" />
 
     <!-- Left gradient for text legibility -->
     <div style="position:absolute;inset:0;z-index:2;background:linear-gradient(105deg, rgba(10,10,10,0.82) 0%, rgba(10,10,10,0.45) 40%, rgba(10,10,10,0.08) 70%, rgba(10,10,10,0.2) 100%);"></div>
@@ -805,25 +807,58 @@
   // ==========================================
   (function() {
     const video = document.getElementById('hero-video');
+    const fallback = document.getElementById('hero-fallback');
     const wrap = document.querySelector('.scroll-video-wrap');
     const hint = document.getElementById('scroll-hint');
     if (!video || !wrap) return;
 
-    const START_TIME = 1.5; // skip first 1.5s
-    video.pause();
+    const START_TIME = 1.5;
     let smoothTime = START_TIME;
     let targetTime = START_TIME;
     let ready = false;
+    let useFallback = false;
+
+    // On mobile, attempt play to unlock the video for scrubbing
+    function tryPlay() {
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          video.pause();
+          video.currentTime = START_TIME;
+        }).catch(() => {
+          // Video cannot autoplay — show fallback image
+          useFallback = true;
+          video.style.display = 'none';
+          if (fallback) fallback.style.display = 'block';
+        });
+      }
+    }
 
     video.addEventListener('loadeddata', () => {
       ready = true;
-      video.currentTime = START_TIME;
+      tryPlay();
       readScroll();
     });
 
     video.addEventListener('canplaythrough', () => {
-      if (!ready) { ready = true; video.currentTime = START_TIME; readScroll(); }
+      if (!ready) { ready = true; tryPlay(); readScroll(); }
     });
+
+    // If video fails to load entirely (bad network / unsupported), show fallback
+    video.addEventListener('error', () => {
+      useFallback = true;
+      video.style.display = 'none';
+      if (fallback) fallback.style.display = 'block';
+    });
+
+    // Timeout: if video hasn't loaded in 4s on mobile, show fallback
+    setTimeout(() => {
+      if (!ready) {
+        useFallback = true;
+        video.style.display = 'none';
+        if (fallback) fallback.style.display = 'block';
+      }
+    }, 4000);
 
     function readScroll() {
       const rect = wrap.getBoundingClientRect();
@@ -844,7 +879,7 @@
     }
 
     function tick() {
-      if (ready && video.duration) {
+      if (ready && video.duration && !useFallback) {
         const diff = targetTime - smoothTime;
         if (Math.abs(diff) > 0.001) {
           smoothTime += diff * 0.06;
