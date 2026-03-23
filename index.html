@@ -794,9 +794,11 @@
     #home{height:102vh!important;}
     .scroll-video-sticky>div:last-child{padding:0 20px 50px!important;}
 
-    /* Menu 3D card — reduce height and padding */
-    .menu-scroll-container{min-height:auto!important;padding:60px 16px!important;}
-    .menu-scroll-card{max-width:100%!important;padding:12px!important;border-radius:18px!important;}
+    /* Menu — disable 3D scroll on mobile, show card normally */
+    .menu-scroll-container{min-height:auto!important;padding:60px 16px!important;display:block!important;}
+    .menu-scroll-inner{perspective:none!important;}
+    .menu-scroll-header{transform:none!important;margin-bottom:30px;}
+    .menu-scroll-card{max-width:100%!important;padding:12px!important;border-radius:18px!important;transform:none!important;}
     .menu-scroll-card-inner{padding:20px!important;border-radius:12px!important;}
     .menu-card-section-title{font-size:20px!important;margin-bottom:16px!important;}
     .menu-card-item-name{font-size:14px!important;}
@@ -987,17 +989,23 @@
     function lerp(a, b, t) { return a + (b - a) * t; }
 
     function update() {
+      // Skip 3D animation on mobile — card is shown flat via CSS
+      if (isMobile()) {
+        card.style.transform = 'none';
+        header.style.transform = 'none';
+        return;
+      }
+
       const rect = container.getBoundingClientRect();
       const total = container.offsetHeight - window.innerHeight;
+      if (total <= 0) return;
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / total));
 
       // Rotate: 20deg -> 0deg
       const rotateX = lerp(20, 0, progress);
-      // Scale: 1.05 -> 1 desktop, 0.7 -> 0.9 mobile
-      const scaleFrom = isMobile() ? 0.7 : 1.05;
-      const scaleTo = isMobile() ? 0.9 : 1;
-      const scale = lerp(scaleFrom, scaleTo, progress);
+      // Scale: 1.05 -> 1
+      const scale = lerp(1.05, 1, progress);
       // Header translates up
       const translateY = lerp(0, -100, progress);
 
