@@ -257,6 +257,45 @@
 </head>
 <body>
 
+<!-- ===== Preloader ===== -->
+<div id="preloader" style="position:fixed;inset:0;z-index:99999;background:#0c0c0c;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.8s cubic-bezier(0.4,0,0.2,1);opacity:1;">
+  <img src="casaarouquesa-rip/assets/branding/footer-logo-large.png" alt="Casa Arouquesa" style="width:clamp(120px,20vw,200px);opacity:0;animation:preloaderLogo 1.2s ease-out 0.2s forwards;" />
+  <div style="margin-top:32px;width:clamp(100px,15vw,160px);height:1px;background:rgba(255,255,255,0.1);border-radius:1px;overflow:hidden;">
+    <div id="preloader-bar" style="height:100%;width:0%;background:var(--red, #c5282a);transition:width 0.4s ease;"></div>
+  </div>
+</div>
+<style>
+  @keyframes preloaderLogo { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  #preloader.fade-out { opacity:0; pointer-events:none; }
+</style>
+<script>
+  (function(){
+    var bar = document.getElementById('preloader-bar');
+    var preloader = document.getElementById('preloader');
+    var progress = 0;
+    // Simulate progress while loading
+    var iv = setInterval(function(){
+      progress += (100 - progress) * 0.08;
+      if (bar) bar.style.width = Math.min(progress, 90) + '%';
+    }, 80);
+    window.addEventListener('load', function(){
+      clearInterval(iv);
+      if (bar) bar.style.width = '100%';
+      setTimeout(function(){
+        preloader.classList.add('fade-out');
+        setTimeout(function(){ preloader.style.display = 'none'; }, 800);
+      }, 400);
+    });
+    // Safety: remove after 6s max
+    setTimeout(function(){
+      clearInterval(iv);
+      if (bar) bar.style.width = '100%';
+      preloader.classList.add('fade-out');
+      setTimeout(function(){ preloader.style.display = 'none'; }, 800);
+    }, 6000);
+  })();
+</script>
+
 <!-- ===== SVG HERB DEFINITIONS (reusable) ===== -->
 <svg style="position:absolute;width:0;height:0;" aria-hidden="true">
   <defs>
@@ -997,10 +1036,13 @@
   const lbImg = document.getElementById('lightbox-img');
   const lbCaption = document.getElementById('lightbox-cap');
 
-  document.querySelectorAll('.lightbox-trigger').forEach(img => {
+  // Make ALL images clickable for lightbox (except nav logo, icons, preloader, fallback, lightbox img itself)
+  document.querySelectorAll('img').forEach(img => {
+    if (img.closest('.nav-logo') || img.closest('.lang-switch') || img.closest('#preloader') || img.id === 'hero-fallback' || img.id === 'lightbox-img') return;
+    img.style.cursor = 'pointer';
     img.addEventListener('click', () => {
       lbImg.src = img.src;
-      lbCaption.textContent = img.dataset.caption || '';
+      lbCaption.textContent = img.dataset.caption || img.alt || '';
       lbOverlay.classList.add('open');
       document.body.style.overflow = 'hidden';
     });
